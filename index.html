@@ -1,1 +1,312 @@
-hbehkvbfch hkevbwkhvkjer
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heart Disease Risk Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F7F4;
+    --surface:#FFFFFF;
+    --ink:#1E2A28;
+    --ink-soft:#5B6A67;
+    --teal:#2E6F5E;
+    --teal-deep:#205043;
+    --clay:#B5533C;
+    --hairline:#DDE3E0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding:48px 20px 80px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  header{margin-bottom:32px;}
+  h1{
+    font-family:'Source Serif 4',serif;
+    font-weight:600;
+    font-size:2rem;
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    color:var(--ink-soft);
+    margin:0;
+    max-width:52ch;
+    line-height:1.5;
+  }
+  form{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:4px;
+    padding:8px 32px 32px;
+  }
+  fieldset{
+    border:none;
+    border-top:1px solid var(--hairline);
+    padding:24px 0;
+    margin:0;
+  }
+  fieldset:first-of-type{border-top:none;}
+  legend{
+    font-family:'Source Serif 4',serif;
+    font-size:1.05rem;
+    padding:0;
+    margin-bottom:16px;
+    color:var(--teal-deep);
+  }
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  label{
+    display:block;
+    font-size:0.875rem;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+  .hint{
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    display:block;
+    margin-top:4px;
+  }
+  input[type=number], select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--hairline);
+    border-radius:3px;
+    font-family:inherit;
+    font-size:0.95rem;
+    color:var(--ink);
+    background:var(--surface);
+  }
+  input[type=number]:focus, select:focus, input[type=range]:focus{
+    outline:2px solid var(--teal);
+    outline-offset:1px;
+  }
+  .range-row{display:flex;align-items:center;gap:14px;}
+  input[type=range]{flex:1;accent-color:var(--teal);}
+  .range-value{
+    font-variant-numeric:tabular-nums;
+    font-weight:600;
+    min-width:38px;
+    text-align:right;
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:480px){.grid-2{grid-template-columns:1fr;}}
+
+  button{
+    width:100%;
+    margin-top:28px;
+    padding:14px;
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:3px;
+    font-family:inherit;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  button:hover{background:var(--teal-deep);}
+  button:disabled{background:var(--ink-soft);cursor:progress;}
+
+  #result{
+    margin-top:20px;
+    padding:20px 24px;
+    border-radius:4px;
+    display:none;
+  }
+  #result.show{display:block;}
+  #result.low{background:#EAF3EF;border:1px solid #BFDBD1;}
+  #result.high{background:#F7EAE6;border:1px solid #E3BDAF;}
+  #result h2{
+    font-family:'Source Serif 4',serif;
+    font-size:1.15rem;
+    margin:0 0 4px;
+  }
+  #result.low h2{color:var(--teal-deep);}
+  #result.high h2{color:var(--clay);}
+  #result p{margin:0;color:var(--ink-soft);font-size:0.9rem;}
+
+  footer{margin-top:20px;font-size:0.78rem;color:var(--ink-soft);line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Heart disease risk check</h1>
+    <p>Enter the patient's clinical details below. The model estimates likelihood based on patterns learned from prior cases — it does not replace a doctor's assessment.</p>
+  </header>
+
+  <form id="riskForm">
+    <fieldset>
+      <legend>Patient profile</legend>
+      <div class="grid-2">
+        <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="age" min="18" max="100" value="50" required>
+        </div>
+        <div class="field">
+          <label for="sex">Sex</label>
+          <select id="sex">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Vitals</legend>
+      <div class="field">
+        <label for="restingBP">Resting blood pressure <span class="hint">mm Hg</span></label>
+        <div class="range-row">
+          <input type="range" id="restingBP" min="80" max="200" value="120">
+          <span class="range-value" id="restingBPVal">120</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="cholesterol">Cholesterol <span class="hint">mg/dL</span></label>
+        <div class="range-row">
+          <input type="range" id="cholesterol" min="100" max="600" value="200">
+          <span class="range-value" id="cholesterolVal">200</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="maxHR">Max heart rate achieved</label>
+        <div class="range-row">
+          <input type="range" id="maxHR" min="60" max="220" value="150">
+          <span class="range-value" id="maxHRVal">150</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fastingBS">Fasting blood sugar &gt; 120 mg/dL</label>
+        <select id="fastingBS">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cardiac findings</legend>
+      <div class="field">
+        <label for="chestPain">Chest pain type</label>
+        <select id="chestPain">
+          <option value="ATA">Atypical angina</option>
+          <option value="NAP">Non-anginal pain</option>
+          <option value="ASY">Asymptomatic</option>
+          <option value="TA">Typical angina</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="restingECG">Resting ECG</label>
+        <select id="restingECG">
+          <option value="Normal">Normal</option>
+          <option value="ST">ST-T wave abnormality</option>
+          <option value="LVH">Left ventricular hypertrophy</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="exerciseAngina">Exercise-induced angina</label>
+        <select id="exerciseAngina">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="oldpeak">Oldpeak <span class="hint">ST depression induced by exercise</span></label>
+        <div class="range-row">
+          <input type="range" id="oldpeak" min="0" max="6" step="0.1" value="1.0">
+          <span class="range-value" id="oldpeakVal">1.0</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="stSlope">ST slope</label>
+        <select id="stSlope">
+          <option value="Up">Upsloping</option>
+          <option value="Flat">Flat</option>
+          <option value="Down">Downsloping</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <button type="submit" id="submitBtn">Check risk</button>
+  </form>
+
+  <div id="result"></div>
+
+  <footer>Prediction served by a Random Forest model trained on historical patient records. Point the fetch URL below at your own deployed API endpoint.</footer>
+</div>
+
+<script>
+  // Wire up live labels for the range sliders
+  ['restingBP','cholesterol','maxHR','oldpeak'].forEach(id=>{
+    const input = document.getElementById(id);
+    const out = document.getElementById(id+'Val');
+    input.addEventListener('input', ()=> out.textContent = input.value);
+  });
+
+  const API_URL = 'http://localhost:5000/predict'; // replace with your deployed endpoint
+
+  document.getElementById('riskForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const resultBox = document.getElementById('result');
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+
+    // Same custom encoding used in the notebook / Streamlit app
+    const sex = document.getElementById('sex').value;
+    const chestPain = document.getElementById('chestPain').value;
+    const fastingBS = document.getElementById('fastingBS').value;
+    const restingECG = document.getElementById('restingECG').value;
+    const exerciseAngina = document.getElementById('exerciseAngina').value;
+    const stSlope = document.getElementById('stSlope').value;
+
+    const payload = {
+      age: Number(document.getElementById('age').value),
+      sex: sex === 'Male' ? 10 : 20,
+      chest_pain: {ATA:5, NAP:10, ASY:15, TA:20}[chestPain],
+      resting_bp: Number(document.getElementById('restingBP').value),
+      cholesterol: Number(document.getElementById('cholesterol').value),
+      fasting_bs: fastingBS === 'Yes' ? 1 : 0,
+      resting_ecg: {Normal:3, ST:6, LVH:9}[restingECG],
+      max_hr: Number(document.getElementById('maxHR').value),
+      exercise_angina: exerciseAngina === 'Yes' ? 8 : 4,
+      oldpeak: Number(document.getElementById('oldpeak').value),
+      st_slope: {Up:1, Flat:2, Down:3}[stSlope]
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      resultBox.className = 'show ' + (data.prediction === 1 ? 'high' : 'low');
+      if (data.prediction === 1) {
+        resultBox.innerHTML = `<h2>Higher risk indicated</h2><p>Model confidence: ${(data.probability*100).toFixed(1)}%. Recommend clinical follow-up.</p>`;
+      } else {
+        resultBox.innerHTML = `<h2>Lower risk indicated</h2><p>Model confidence: ${((1-data.probability)*100).toFixed(1)}%.</p>`;
+      }
+    } catch (err) {
+      resultBox.className = 'show high';
+      resultBox.innerHTML = `<h2>Couldn't reach the model</h2><p>Check that your API is running at ${API_URL} and try again.</p>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Check risk';
+    }
+  });
+</script>
+</body>
+</html>
